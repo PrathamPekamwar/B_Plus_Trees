@@ -29,17 +29,12 @@ bool compare(Entry *a, Entry *b)
 class Node
 {
 public:
-    int d, t;
-    // Data Node has d to 2d values except Root node.
-    // Index Node has t to 2t + 1 values except Root node.
     vector<Entry *> keys;
     bool isDataNode;
     Node *parent;
     Node *left_child;
-    Node(int d_in, int t_in, bool dataNode)
+    Node(bool dataNode)
     {
-        d = d_in;
-        t = t_in;
         parent = nullptr;
         left_child = nullptr;
         isDataNode = dataNode;
@@ -68,26 +63,17 @@ private:
     Node *root;
 
 public:
-    Node *findNode(int data, Node *start)
-    {
-        Node *ans = nullptr;
-
-        return ans;
-    }
-
     void insertKey(int value)
     {
         // No Root Exists.
-
         if (root == nullptr)
         {
-            root = new Node(d, t, true);
+            root = new Node(true);
             root->keys.push_back(new Entry(value));
             dataNode++;
         }
 
         // Root Exists.
-
         else
         {
             // Root DataNode case.
@@ -107,7 +93,7 @@ public:
                     root->keys.push_back(n);
                     sort(root->keys.begin(), root->keys.end(), compare);
 
-                    Node *right_node = new Node(d, t, true);
+                    Node *right_node = new Node(true);
                     dataNode++;
                     vector<Entry *> vec(root->keys.begin() + d, root->keys.end());
                     right_node->keys = vec;
@@ -120,7 +106,7 @@ public:
                     n = new Entry(right_node->keys[0]->data);
                     n->right_child = right_node;
 
-                    root = new Node(d, t, false);
+                    root = new Node(false);
                     indexNode++;
                     root->keys.push_back(n);
                     root->left_child = left;
@@ -131,7 +117,6 @@ public:
             }
 
             // Root IndexNode case.
-
             else
             {
                 // Finding data node
@@ -170,7 +155,7 @@ public:
                     curr->keys.push_back(n);
                     sort(curr->keys.begin(), curr->keys.end(), compare);
 
-                    Node *right_node = new Node(d, t, true);
+                    Node *right_node = new Node(true);
                     dataNode++;
                     vector<Entry *> vec(curr->keys.begin() + d, curr->keys.end());
                     right_node->keys = vec;
@@ -197,22 +182,20 @@ public:
                     {
                         if (curr == root)
                         {
-                            Node *right_node = new Node(d, t, false);
+                            Node *right_node = new Node(false);
                             indexNode++;
                             vector<Entry *> vec(curr->keys.begin() + t + 1, curr->keys.end());
                             right_node->keys = vec;
                             vec.clear();
                             Entry *imp = curr->keys[t];
-                            int num = curr->keys[t]->data;
                             curr->keys.resize(t);
 
-                            Entry *n = new Entry(num);
                             right_node->left_child = imp->right_child;
-                            n->right_child = right_node;
+                            imp->right_child = right_node;
 
-                            root = new Node(d, t, false);
+                            root = new Node(false);
                             indexNode++;
-                            root->keys.push_back(n);
+                            root->keys.push_back(imp);
                             root->left_child = curr;
 
                             curr->parent = root;
@@ -227,22 +210,20 @@ public:
                         }
                         else
                         {
-                            Node *right_node = new Node(d, t, false);
+                            Node *right_node = new Node(false);
                             indexNode++;
                             vector<Entry *> vec(curr->keys.begin() + t + 1, curr->keys.end());
                             right_node->keys = vec;
                             vec.clear();
                             Entry *imp = curr->keys[t];
-                            int num = curr->keys[t]->data;
                             curr->keys.resize(t);
 
-                            Entry *n = new Entry(num);
                             right_node->left_child = imp->right_child;
-                            n->right_child = right_node;
+                            imp->right_child = right_node;
 
                             curr = curr->parent;
                             right_node->parent = curr;
-                            curr->keys.push_back(n);
+                            curr->keys.push_back(imp);
                             sort(curr->keys.begin(), curr->keys.end(), compare);
 
                             right_node->left_child->parent = right_node;
@@ -279,8 +260,8 @@ int main()
 {
     int d, t, operation;
 
-    // 2d is the capacity of Data Node.
-    // t to 2t+1 keys in a Index Node.
+    // Data Node has d to 2d values except Root node.
+    // Index Node has t to 2t + 1 values except Root node.
 
     cin >> d;
     cin >> t;
@@ -305,12 +286,9 @@ int main()
             break;
         }
 
-        case 3:
-        {
-            return 0;
-        }
+        case 3: return 0;
         }
     }
-
+    
     return 0;
 }
